@@ -9,11 +9,13 @@ import org.apache.commons.codec.digest.Crypt;
 public class PasswordDecrypt {
 
     public static void main(String[] args) throws IOException {
+        int count = 0;
+        long start = System.nanoTime(); // for sequential program is better to use nanoTime than currentTimeMills()(that is wall-clock time)
         String fileName="./PswDb/db100.txt";
         Path path = Paths.get(fileName);
         Scanner scanner = new Scanner(path);
-        ArrayList<String> psws = new ArrayList<String>();
-        ArrayList<String> hashes = new ArrayList<String>();
+        ArrayList<String> psws = new ArrayList<>();
+        ArrayList<String> hashes = new ArrayList<>();
         while(scanner.hasNextLine()){
             //process each line
             String line = scanner.nextLine();
@@ -23,6 +25,7 @@ public class PasswordDecrypt {
         }
         scanner.close();
         int size=psws.size();
+        System.out.println("Num psw: " + size);
         for(int i=0;i<size;i++){
             int d=1;
             int m=1;
@@ -38,6 +41,8 @@ public class PasswordDecrypt {
                         String hash=Crypt.crypt(psw, "parallel");
                         if(hashes.get(i).equals(hash)){
                             found=true;
+                            count++;
+                            System.out.println("Psw db: " + psws.get(i) + " Psw generated: " + psw + " finds, crypt: " + hashes.get(i));
                         }
                         d++;
                     }
@@ -48,6 +53,10 @@ public class PasswordDecrypt {
                 y++;
             }
         }
+        long finish = System.nanoTime();
+        long timeelaps = (finish-start)/1000000;
+        System.out.println();
+        System.out.println("Psw decrypted: " + count + " Time elapsed: " + timeelaps +"ms " + timeelaps/1000 +"s");
     }
 
 }
